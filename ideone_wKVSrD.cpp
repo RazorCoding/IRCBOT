@@ -15,7 +15,7 @@ int main(int argc, char *argv[])
 	//IRC Arguments
 	string nick = "NICK bot23224\r\n";
         string user = "USER Bot Bot Bot :a bot\r\n";
-	std::string channel = "JOIN #default\r\n";
+	std::string channel = "JOIN #bots\r\n";
 	std::string ping = "PONG :\r\n";
         std::string msg = "privmsg #channel : Hi \r\n";	
 	
