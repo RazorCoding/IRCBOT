@@ -6,29 +6,30 @@
 #include<netdb.h>
 #include<errno.h>
 #include<chrono>
+#include<unistd.h>
+#include<fstream>
 
 
-using namespace std;
 int main(int argc, char *argv[])
 {
 
 	//IRC Arguments
-	string nick = "NICK bot23224\r\n";
-        string user = "USER Bot Bot Bot :a bot\r\n";
-	std::string channel = "JOIN #bots\r\n";
-	std::string ping = "PONG :\r\n";
-        std::string msg = "privmsg #channel : Hi \r\n";	
+	std::string nick = "NICK bot23224\r\n";
+	std::string user = "USER Bot Bot Bot :a bot\r\n";
+	std::string channel = "JOIN #default\r\n";
+	std::string ping = "PONG \r\n";
+        std::string msg = "privmsg #default : Pong \r\n";	
 	
 	//Variables
 	int connected = 0;
 	struct sockaddr_in addr;
 	struct hostent *host;
 	int port = 6667;
-	char Hostname = "irc.freenode.net";
+	char hostname[] = "irc.freenode.net";
 
 	//gethostbyname
 	
-	host = gethostbyname(Hostname);
+	host = gethostbyname(hostname);
 	
 	//assigning IP Address
 	addr.sin_addr.s_addr = *(unsigned long*)host->h_addr;
@@ -61,23 +62,29 @@ int main(int argc, char *argv[])
 	std::cout << "Channel:" << channel << " to server" << std::endl; 
 	
 
-	char str[] = "PINGr\r\n";
-	 char str1[]= "!Hi\r\n";
+	char str[] = "PONG";
+	 char str1[]= "!ping\r\n";
+	
 	//Reacving
 	char sockbuff[4096]; 
+	
 	while (connected < 1) {
-                if(strcmp(str,sockbuff) != NULL )
+		
+		memset(&sockbuff, '\0', sizeof(sockbuff));
+                recv(sockfd,sockbuff,4096,0);
+  			
+		if(strcmp(str,sockbuff) != 0 )
 		{
-		   std::cout << "PONG:!" << std::endl;
-		   send(sockfd, ping.c_str(), ping.size(),0); 
-		}	
-		if(strcmp(str1,sockbuff) != NULL)
+
+			send(sockfd, ping.c_str(), ping.size(),0); 
+		}
+		if(strcmp(str1,sockbuff) != 0)
 		{
 			send(sockfd, msg.c_str(), msg.size(),0);
 		}
-		memset(&sockbuff, '\0', sizeof(sockbuff)); 
-		recv(sockfd,sockbuff,4096,0);
-		std::cout << sockbuff << std::endl;	
- 	}
+			
+		std::cout << sockbuff << std::endl;		    
+	}
+
   return 0;
 }
