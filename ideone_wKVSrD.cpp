@@ -25,8 +25,6 @@ int main(int argc, char *argv[])
 	struct hostent *host;
 	int port = 6667;
 	char hostname[] = "irc.freenode.net";
-	SSL_CTX *sslctx;
-	SSL *cSSL;
 	//gethostbyname
 
 	host = gethostbyname(hostname);
