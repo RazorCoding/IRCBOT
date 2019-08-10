@@ -17,9 +17,9 @@
 
 int main()
 {
-	SSL_CTX *sslctx;
-	SSL *cSSL;
-	int ssl_err;
+	//SSL_CTX *sslctx;
+	//SSL *cSSL;
+	//int ssl_err;
 	        
 	//IRC Arguments
 	std::string nick = "NICK bot23224\r\n";
@@ -32,7 +32,7 @@ int main()
 	int connected = 0;
 	struct sockaddr_in addr;
 	struct hostent *host;
-	int port = 7000;
+	int port = 6667;
 	char hostname[] = "irc.freenode.net";
 	
 	//gethostbyname
@@ -46,23 +46,16 @@ int main()
 
 	//Creating socket
 	int sockfd;
-	/*sockfd = socket(AF_INET,SOCK_STREAM,0);
+	sockfd = socket(AF_INET,SOCK_STREAM,0);
 	if(sockfd < 0)
 	{
 		perror("socket:");
 	}
 	
 
-	//Connecting socket
-	int status =0;
-
-	status = connect(sockfd, (struct sockaddr *)&addr, sizeof(addr));
-	if(status < 0)
-	{
-		perror("connect:");
-	}*/
+	// SSL--SOCKET
 	
-	sslctx = SSL_CTX_new( SSLv23_server_method());
+	/*sslctx = SSL_CTX_new( SSLv23_server_method());
         if(!sslctx)
 	{
 		perror("Unable to create SSL context:");
@@ -70,14 +63,14 @@ int main()
 		 exit(EXIT_FAILURE);
 	}
 	SSL_CTX_set_options(sslctx, SSL_OP_SINGLE_DH_USE);
-        int use_cert = SSL_CTX_use_certificate_file(sslctx, "/serverCertificate.pem" , SSL_FILETYPE_PEM);
+        int use_cert = SSL_CTX_use_certificate_file(sslctx, "/etc/ssl/certs/GTS_Root_R4.pem" , SSL_FILETYPE_PEM);
 	if(use_cert <= 0)
 	{
 		perror("Cert:");
 		ERR_print_errors_fp(stderr);
  		exit(EXIT_FAILURE);
 	}
-	int use_prv = SSL_CTX_use_PrivateKey_file(sslctx, "/serverCertificate.pem", SSL_FILETYPE_PEM);
+	int use_prv = SSL_CTX_use_PrivateKey_file(sslctx, "/etc/ssl/certs/GTS_Root_R4.pem", SSL_FILETYPE_PEM);
 	if(use_prv <= 0)
 	{
 		perror("PRIVATE KEY:");
@@ -100,17 +93,17 @@ int main()
 		case 3:
 			std::cout << ssl_err;
 	}
-	
+	*/	
 	sockfd = socket(AF_INET,SOCK_STREAM,0);
 	if(sockfd < 0)
 	{
-		std::cerr << "SOCKET: " << std::endl;
+		perror( "SOCKET: ");
 	}
 
 	int status = connect(sockfd, (struct sockaddr *)&addr, sizeof(addr));
 	if(status < 0)
 	{
-		std::cerr << "connect:";
+		perror("connect:");
 	}
 	// sending
 	std::cout << "Connecting to: "<< hostname << std::endl;
@@ -126,7 +119,7 @@ int main()
 	std::string buff = " ";
 	std::smatch mt;
     	std::regex r ("PING\\s*:?(.*)");
-	//std::regex x (!.*[A-Z]);
+	std::regex x ("![a-zA-Z]*");
         
 	while (connected < 1) {
 	memset(&sockbuff, '\0', sizeof(sockbuff));
@@ -138,11 +131,11 @@ int main()
 			ping.append("\r\n");
 			send(sockfd,ping.c_str(),ping.size(),MSG_NOSIGNAL);
 	   }
-	/* if(std::regex_search(buff , mt,x))
+	  if(std::regex_search(buff , mt,x))
 	   {
-		std::cout << "!PONG" << std::endl;
-	   }
-	   */
+		
+		send(sockfd,msg.c_str(),msg.size(),0);
+	   } 
 	   recv(sockfd,sockbuff,4096,0);
 	   buff = sockbuff;
 	   std::cout << buff << std::endl;
