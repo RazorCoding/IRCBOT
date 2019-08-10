@@ -22,12 +22,12 @@ int main()
 	//int ssl_err;
 	        
 	//IRC Arguments
-	std::string nick = "NICK bot23224\r\n";
+	std::string nick = "NICK DS\r\n";
 	std::string user = "USER Bot Bot Bot :a bot\r\n";
 	std::string channel = "JOIN #default\r\n";
 	std::string ping = "PONG :";
-        std::string msg = "privmsg #default : Pong \r\n";
-
+        std::string msg = "privmsg #default : PONG \r\n";
+	std::string ctcp = ":alice!a@localhost PRIVMSG bob :\x01VERSION\x01"
 	//Variables
 	int connected = 0;
 	struct sockaddr_in addr;
@@ -119,7 +119,7 @@ int main()
 	std::string buff = " ";
 	std::smatch mt;
     	std::regex r ("PING\\s*:?(.*)");
-	std::regex x ("[!.]PING");
+	std::regex x ("[!]PING");
         
 	while (connected < 1) {
 	memset(&sockbuff, '\0', sizeof(sockbuff));
@@ -132,10 +132,10 @@ int main()
 			send(sockfd,ping.c_str(),ping.size(),MSG_NOSIGNAL);
 	   }
 	  if(std::regex_search(buff , mt,x))
-	   {
-		
+	   {	
 		send(sockfd,msg.c_str(),msg.size(),0);
-	   } 
+	   }
+
 	   recv(sockfd,sockbuff,4096,0);
 	   buff = sockbuff;
 	   std::cout << buff << std::endl;
