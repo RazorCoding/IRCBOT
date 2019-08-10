@@ -24,10 +24,10 @@ int main()
 	//IRC Arguments
 	std::string nick = "NICK DS\r\n";
 	std::string user = "USER Bot Bot Bot :a bot\r\n";
-	std::string channel = "JOIN #default\r\n";
+	std::string channel = "JOIN #test\r\n";
 	std::string ping = "PONG :";
         std::string msg = "privmsg #default : PONG \r\n";
-	std::string ctcp = ":alice!a@localhost PRIVMSG bob :\x01VERSION\x01"
+	std::string ctcp = "";
 	//Variables
 	int connected = 0;
 	struct sockaddr_in addr;
@@ -120,7 +120,7 @@ int main()
 	std::smatch mt;
     	std::regex r ("PING\\s*:?(.*)");
 	std::regex x ("[!]PING");
-        
+	std::regex i (":[a-z]+!~[a-z]+@[a-z]+\.[a-z]+\s\w+\s\w+\s:\w+");
 	while (connected < 1) {
 	memset(&sockbuff, '\0', sizeof(sockbuff));
 	
@@ -129,13 +129,20 @@ int main()
 		   	std::smatch::iterator it = mt.begin()+1; // First match is entire s
 			ping.append(*it);
 			ping.append("\r\n");
-			send(sockfd,ping.c_str(),ping.size(),MSG_NOSIGNAL);
+			send(sockfd,ping.c_str(),ping.size(),0);
 	   }
 	  if(std::regex_search(buff , mt,x))
 	   {	
 		send(sockfd,msg.c_str(),msg.size(),0);
 	   }
-
+	  if(std::regex_search(buff, mt,i))
+	  {
+	   std::smatch::iterator yt = mt.begin()+1;
+	   ctcp.append(*yt);
+	   ctcp.append("\r\n");
+	   std::cout << ctcp << std::endl;
+	   send(sockfd,ctcp.c_str(),ctcp.size(),0);
+	  }
 	   recv(sockfd,sockbuff,4096,0);
 	   buff = sockbuff;
 	   std::cout << buff << std::endl;
