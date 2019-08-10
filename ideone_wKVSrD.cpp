@@ -119,7 +119,7 @@ int main()
 	std::string buff = " ";
 	std::smatch mt;
     	std::regex r ("PING\\s*:?(.*)");
-	std::regex x ("![a-zA-Z]*");
+	std::regex x ("[!.]PING");
         
 	while (connected < 1) {
 	memset(&sockbuff, '\0', sizeof(sockbuff));
