@@ -8,16 +8,15 @@
 #include<unistd.h>
 #include<regex>
 #include<string>
-//#include <openssl/applink.c>
 #include <openssl/bio.h>
 #include <openssl/ssl.h>
 #include <openssl/err.h>
 #include <signal.h>
+#include<unistd.h>
 
 
 int main()
 {
-	int newsockfd;
 	SSL_CTX *sslctx;
 	SSL *cSSL;
 	int ssl_err;
@@ -33,7 +32,7 @@ int main()
 	int connected = 0;
 	struct sockaddr_in addr;
 	struct hostent *host;
-	int port = 6697;
+	int port = 7000;
 	char hostname[] = "irc.freenode.net";
 	
 	//gethostbyname
@@ -47,7 +46,7 @@ int main()
 
 	//Creating socket
 	int sockfd;
-	sockfd = socket(AF_INET,SOCK_STREAM,0);
+	/*sockfd = socket(AF_INET,SOCK_STREAM,0);
 	if(sockfd < 0)
 	{
 		perror("socket:");
@@ -56,19 +55,38 @@ int main()
 
 	//Connecting socket
 	int status =0;
+
 	status = connect(sockfd, (struct sockaddr *)&addr, sizeof(addr));
 	if(status < 0)
 	{
 		perror("connect:");
-	}
+	}*/
 	
 	sslctx = SSL_CTX_new( SSLv23_server_method());
-        SSL_CTX_set_options(sslctx, SSL_OP_SINGLE_DH_USE);
+        if(!sslctx)
+	{
+		perror("Unable to create SSL context:");
+		ERR_print_errors_fp(stderr);
+		 exit(EXIT_FAILURE);
+	}
+	SSL_CTX_set_options(sslctx, SSL_OP_SINGLE_DH_USE);
         int use_cert = SSL_CTX_use_certificate_file(sslctx, "/serverCertificate.pem" , SSL_FILETYPE_PEM);
-        int use_prv = SSL_CTX_use_PrivateKey_file(sslctx, "/serverCertificate.pem", SSL_FILETYPE_PEM);
+	if(use_cert <= 0)
+	{
+		perror("Cert:");
+		ERR_print_errors_fp(stderr);
+ 		exit(EXIT_FAILURE);
+	}
+	int use_prv = SSL_CTX_use_PrivateKey_file(sslctx, "/serverCertificate.pem", SSL_FILETYPE_PEM);
+	if(use_prv <= 0)
+	{
+		perror("PRIVATE KEY:");
+		ERR_print_errors_fp(stderr);
+ 		exit(EXIT_FAILURE);
+	}
 
         cSSL = SSL_new(sslctx);
-        SSL_set_fd(cSSL, newsockfd );
+        SSL_set_fd(cSSL, sockfd );
         //Here is the SSL connect  
         ssl_err = SSL_connect(cSSL);
         
@@ -83,10 +101,21 @@ int main()
 			std::cout << ssl_err;
 	}
 	
+	sockfd = socket(AF_INET,SOCK_STREAM,0);
+	if(sockfd < 0)
+	{
+		std::cerr << "SOCKET: " << std::endl;
+	}
+
+	int status = connect(sockfd, (struct sockaddr *)&addr, sizeof(addr));
+	if(status < 0)
+	{
+		std::cerr << "connect:";
+	}
 	// sending
 	std::cout << "Connecting to: "<< hostname << std::endl;
         send(sockfd, nick.c_str(), nick.size(), 0);
-	std::cout << "Sent: " << nick << " to server" << std::endl;
+	std::cout << "Sent: " << nick << " to serveir" << std::endl;
         send(sockfd, user.c_str(), user.size(), 0);
 	std::cout << "sent: " << user << " to server" << std::endl;
 	send(sockfd, channel.c_str(), channel.size(),0);
@@ -98,7 +127,7 @@ int main()
 	std::smatch mt;
     	std::regex r ("PING\\s*:?(.*)");
 	//std::regex x (!.*[A-Z]);
-
+        
 	while (connected < 1) {
 	memset(&sockbuff, '\0', sizeof(sockbuff));
 	
@@ -107,16 +136,16 @@ int main()
 		   	std::smatch::iterator it = mt.begin()+1; // First match is entire s
 			ping.append(*it);
 			ping.append("\r\n");
-			std::cout << ping;
-			send(sockfd,ping.c_str(),ping.size(),0);
+			send(sockfd,ping.c_str(),ping.size(),MSG_NOSIGNAL);
 	   }
-/*	   if(std::regex_search(buff , mt,x))
+	/* if(std::regex_search(buff , mt,x))
 	   {
 		std::cout << "!PONG" << std::endl;
 	   }
+	   */
 	   recv(sockfd,sockbuff,4096,0);
 	   buff = sockbuff;
-	   std::cout << buff << std::endl;*/
+	   std::cout << buff << std::endl;
 	}
   return 0;
 }
