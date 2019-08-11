@@ -14,27 +14,22 @@
 #include <signal.h>
 #include<unistd.h>
 
-
 int main()
 {
-	//SSL_CTX *sslctx;
-	//SSL *cSSL;
-	//int ssl_err;
-	        
-	//IRC Arguments
-	std::string nick = "NICK DS\r\n";
-	std::string user = "USER Bot Bot Bot :a bot\r\n";
-	std::string channel = "JOIN #test\r\n";
-	std::string ping = "PONG :";
-        std::string msg = "privmsg #default : PONG \r\n";
-	std::string ctcp = "";
+    //IRC Arguments
+	std::string nick = "NICK DS\r\n"; //NICK
+	std::string user = "USER Bot Bot Bot :a bot\r\n"; // USer 
+	std::string channel = "JOIN #test\r\n"; //Channel 
+	std::string ping = "PONG :"; //PING
+        std::string msg = "privmsg #default : PONG \r\n";/PING
+	std::string ctcp = ""; //CTCP VERSION
 	//Variables
 	int connected = 0;
 	struct sockaddr_in addr;
 	struct hostent *host;
 	int port = 6667;
 	char hostname[] = "irc.freenode.net";
-	
+
 	//gethostbyname
 	host = gethostbyname(hostname);
 
@@ -46,54 +41,8 @@ int main()
 
 	//Creating socket
 	int sockfd;
-	sockfd = socket(AF_INET,SOCK_STREAM,0);
-	if(sockfd < 0)
-	{
-		perror("socket:");
-	}
-	
 
-	// SSL--SOCKET
-	
-	/*sslctx = SSL_CTX_new( SSLv23_server_method());
-        if(!sslctx)
-	{
-		perror("Unable to create SSL context:");
-		ERR_print_errors_fp(stderr);
-		 exit(EXIT_FAILURE);
-	}
-	SSL_CTX_set_options(sslctx, SSL_OP_SINGLE_DH_USE);
-        int use_cert = SSL_CTX_use_certificate_file(sslctx, "/etc/ssl/certs/GTS_Root_R4.pem" , SSL_FILETYPE_PEM);
-	if(use_cert <= 0)
-	{
-		perror("Cert:");
-		ERR_print_errors_fp(stderr);
- 		exit(EXIT_FAILURE);
-	}
-	int use_prv = SSL_CTX_use_PrivateKey_file(sslctx, "/etc/ssl/certs/GTS_Root_R4.pem", SSL_FILETYPE_PEM);
-	if(use_prv <= 0)
-	{
-		perror("PRIVATE KEY:");
-		ERR_print_errors_fp(stderr);
- 		exit(EXIT_FAILURE);
-	}
 
-        cSSL = SSL_new(sslctx);
-        SSL_set_fd(cSSL, sockfd );
-        //Here is the SSL connect  
-        ssl_err = SSL_connect(cSSL);
-        
-	//Error occurred,
-	switch (SSL_get_error(cSSL, ssl_err))
-	{
-		case 1:
-			std::cout << ssl_err;
-		case 2:
-			std::cout << ssl_err;
-		case 3:
-			std::cout << ssl_err;
-	}
-	*/	
 	sockfd = socket(AF_INET,SOCK_STREAM,0);
 	if(sockfd < 0)
 	{
@@ -123,7 +72,7 @@ int main()
 	std::regex i (":[a-z]+!~[a-z]+@[a-z]+\.[a-z]+\s\w+\s\w+\s:\w+");
 	while (connected < 1) {
 	memset(&sockbuff, '\0', sizeof(sockbuff));
-	
+
 	   if (std::regex_search (buff, mt, r))
 	   {
 		   	std::smatch::iterator it = mt.begin()+1; // First match is entire s
@@ -132,7 +81,7 @@ int main()
 			send(sockfd,ping.c_str(),ping.size(),0);
 	   }
 	  if(std::regex_search(buff , mt,x))
-	   {	
+	   {
 		send(sockfd,msg.c_str(),msg.size(),0);
 	   }
 	  if(std::regex_search(buff, mt,i))
