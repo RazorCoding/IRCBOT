@@ -49,9 +49,9 @@ int main()
  }
  // sending
  std::cout << "Connecting to: "<< hostname << std::endl;
-        send(sockfd, nick.c_str(), nick.size(), 0);
+ send(sockfd, nick.c_str(), nick.size(), 0);
  std::cout << "Sent: " << nick << " to serveir" << std::endl;
-        send(sockfd, user.c_str(), user.size(), 0);
+ send(sockfd, user.c_str(), user.size(), 0);
  std::cout << "sent: " << user << " to server" << std::endl;
  send(sockfd, channel.c_str(), channel.size(),0);
  std::cout << "Channel:" << channel << " to server" << std::endl;
@@ -60,34 +60,39 @@ int main()
  char sockbuff[4096];
  std::string buff = " ";
  std::smatch mt;
-     std::regex r ("PING\\s*:?(.*)");
- std::regex x ("[!]PING");
- std::regex i (":[a-z]+!~[a-z]+@[a-z]+\.[a-z]+\s\w+\s\w+\s:\w+");
+ std::regex r ("PING\\s*:?(.*)"); // REGEX PING
+ std::regex x ("[!]PING"); // REGEX PING FIND
+ std::regex i (":[a-z]+!~[a-z]+@[a-z]+\.[a-z]+\s\w+\s\w+\s:\w+"); ?//CTCP VERSION
+     
+ //LOOP
  while (connected < 1) {
  memset(&sockbuff, '\0', sizeof(sockbuff));
-
+    //PING SEND
     if (std::regex_search (buff, mt, r))
     {
-      std::smatch::iterator it = mt.begin()+1; // First match is entire s
-   ping.append(*it);
-   ping.append("\r\n");
-   send(sockfd,ping.c_str(),ping.size(),0);
+            std::smatch::iterator it = mt.begin()+1;
+            ping.append(*it);
+            ping.append("\r\n");                         
+            send(sockfd,ping.c_str(),ping.size(),0);
     }
-   if(std::regex_search(buff , mt,x))
+     //!PING PONG
+    if(std::regex_search(buff , mt,x))
     {
-  send(sockfd,msg.c_str(),msg.size(),0);
+            send(sockfd,msg.c_str(),msg.size(),0);   
     }
-   if(std::regex_search(buff, mt,i))
-   {
-    std::smatch::iterator yt = mt.begin()+1;
-    ctcp.append(*yt);
-    ctcp.append("\r\n");
-    std::cout << ctcp << std::endl;
-    send(sockfd,ctcp.c_str(),ctcp.size(),0);
+     //CTCP VERSION SEND
+    if(std::regex_search(buff, mt,i))
+    {
+            std::smatch::iterator yt = mt.begin()+1;
+            ctcp.append(*yt);
+            ctcp.append("\r\n");                    
+            std::cout << ctcp << std::endl;
+            send(sockfd,ctcp.c_str(),ctcp.size(),0);
    }
+     //REACVING
     recv(sockfd,sockbuff,4096,0);
     buff = sockbuff;
     std::cout << buff << std::endl;
  }
-  return 0;
+  return 0; // RETURN 0;
 }
