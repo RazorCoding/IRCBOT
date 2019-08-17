@@ -91,7 +91,7 @@ int main(int argc, char *argv[]) {
 		std::cout << "./a.out 'HOSTNAME'\n";
 	}
 
-    std::string hostname = "irc.freenode.net"; // Hostname variable
+    std::string hostname; // Hostname variable
     hostname = argv[1];
     irc box;
 
