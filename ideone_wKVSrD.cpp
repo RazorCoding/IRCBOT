@@ -38,7 +38,7 @@ class irc {
         Errstatus = connect(sockfd, (struct sockaddr *)&addr, sizeof(addr));
         if (Errstatus !=0) {std::cerr << "connect error\n";}
         // sending
-        std::cout << "Connecting....  "  << std::endl;
+        std::cout << "Connecting to:  " << hostname  << std::endl;
         send(sockfd, nick.c_str(), nick.size(), 0);
         std::cout << "Sent: " << nick << " to serveir" << std::endl;
         send(sockfd, user.c_str(), user.size(), 0);
@@ -86,7 +86,7 @@ class irc {
 ;
 int main(int argc, char *argv[]) {
 	
-	if(argc < 1)
+	if(argc < 2)
 	{
 		std::cout << "./a.out 'HOSTNAME'\n";
 	}
