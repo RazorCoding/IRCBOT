@@ -5,6 +5,8 @@
 #include <sys/socket.h> 
 #include <sys/types.h> 
 class irc {
+	private:
+		static int connected;
     public:
 	    // Socket
 	    int socketfd(int sockfd) {
@@ -53,7 +55,7 @@ class irc {
         std::regex x("[!]ping"); // REGEX PING FIND
         std::regex i(":[a-z]+!~[a-z]+@[a-z]+\.[a-z]+\s\w+\s\w+\s:\w+"); // CTCP VERSION
         // LOOP
-	int connected = 0;
+	
         while (connected < 1) {
             memset(&sockbuff, '\0', sizeof(sockbuff));
             // PING SEND
@@ -81,14 +83,15 @@ class irc {
             std::cout << buff << std::endl;
         }
     }
-}
+};
 
-;
+int irc::connected;
+
 int main(int argc, char *argv[]) {
 	
 	if(argc < 2)
 	{
-		std::cout << "./a.out 'HOSTNAME'\n";
+	std::cout << argv[0] << " " << "HOSTNAME\n";
 	}
 
     std::string hostname; // Hostname variable
