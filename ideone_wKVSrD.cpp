@@ -4,6 +4,8 @@
 #include <iostream>
 #include <regex>
 #include <string>
+#include<thread>
+
 class irc {
    private:
     static int connected;
@@ -46,6 +48,7 @@ class irc {
         }
         // sending
         std::cout << "Connecting to:  " << hostname << std::endl;
+        std::cout << "Port: Non-SSL Port 6667" << std::endl;
         send(sockfd, nickjoin.c_str(), nickjoin.size(), 0);
         std::cout << "Sent: " << nick << " to server" << std::endl;
         send(sockfd, user.c_str(), user.size(), 0);
@@ -58,9 +61,8 @@ class irc {
         std::smatch mt;
         std::regex r("PING\\s*:?(.*)");  // REGEX PING
         std::regex x("[!]ping");         // REGiEX PING FIND
-        std::regex y("[!]PONG");
-        std::regex i(
-            ":[a-z]+!~[a-z]+@[a-z]+\.[a-z]+\s\w+\s\w+\s:\w+");  // CTCP
+        std::regex y("[!]pong");
+        std::regex i( ":[a-z]+!~[a-z]+@[a-z]+\.[a-z]+\s\w+\s\w+\s:\w+");  // CTCP
                                                                 // VERSION
         // LOOP
 
@@ -115,6 +117,5 @@ int main(int argc, char *argv[]) {
     int sockfd;
     sockfd = box.socketfd(sockfd);
     box.sockconnect(sockfd, hostname);
-
     return 0;
 }
